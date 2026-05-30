@@ -544,3 +544,159 @@ select, input { font-family: 'Inter', sans-serif; outline: none; }
 
 /* ── Shared Utilities ─────────────────────────────────── */
 .mono { font-family: 'JetBrains Mono', monospace; }
+
+
+/* ════════════════════════════════════════════════════════
+   RESPONSIVE — Tablet (≤ 900px)
+════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+
+  /* Header */
+  .app-header { padding: 14px 20px; }
+  .app-header h1 { font-size: 1.05rem; }
+
+  /* Main padding */
+  .app-main { padding: 16px 20px; gap: 14px; }
+
+  /* Controls: 3 cols → 2 cols */
+  .controls-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  /* Buttons span full width on tablet */
+  .btn-cluster {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    min-width: unset;
+  }
+  .btn-cluster .btn { flex: 1; min-width: 100px; }
+
+  /* Middle row: side by side → stacked */
+  .middle-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* Bottom row: fixed+flex → stacked */
+  .bottom-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* Complexity grid: 4 cols → 2 cols */
+  .complexity-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Visualizer height */
+  .visualizer-area { min-height: 220px; }
+  .visualizer-panel { min-height: 260px; }
+
+  /* Legend wraps */
+  .visualizer-header { flex-direction: column; align-items: flex-start; }
+}
+
+
+/* ════════════════════════════════════════════════════════
+   RESPONSIVE — Mobile (≤ 600px)
+════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+
+  /* Header */
+  .app-header { padding: 12px 16px; }
+  .app-header h1 { font-size: 0.95rem; }
+  .header-icon { width: 32px; height: 32px; font-size: 15px; }
+  .header-badge { display: none; } /* hide on very small screens */
+
+  /* Main */
+  .app-main { padding: 12px 12px; gap: 12px; }
+
+  /* Card padding */
+  .card { padding: 14px; }
+
+  /* Controls: all in 1 column */
+  .controls-row {
+    grid-template-columns: 1fr;
+  }
+  .btn-cluster {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .btn-cluster .btn {
+    flex: 1;
+    min-width: 80px;
+    padding: 10px 10px;
+    font-size: 0.8rem;
+  }
+
+  /* Array type pills: wrap tightly */
+  .array-type-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .type-pills { gap: 6px; }
+  .type-pill { padding: 5px 10px; font-size: 0.74rem; }
+
+  /* Custom input stacks */
+  .custom-input-row { flex-direction: column; align-items: stretch; }
+  .custom-array-input { min-width: unset; width: 100%; }
+
+  /* Visualizer shorter on mobile */
+  .visualizer-area { min-height: 180px; gap: 1px; }
+  .visualizer-panel { min-height: 210px; }
+
+  /* Legend: 2x2 grid on mobile */
+  .legend { gap: 8px; }
+  .legend-item { font-size: 0.68rem; }
+
+  /* Algorithm info */
+  .algo-info-name { font-size: 0.95rem; }
+  .algo-description { font-size: 0.78rem; }
+  .complexity-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .complexity-item { padding: 8px 6px; }
+  .complexity-value { font-size: 0.72rem; }
+
+  /* Metrics: 2x2 stays but smaller */
+  .metric-value { font-size: 1.25rem; }
+
+  /* Stats chart label column smaller */
+  .chart-row { grid-template-columns: 70px 1fr 60px; gap: 8px; }
+  .chart-algo-name { font-size: 0.72rem; }
+  .chart-time { font-size: 0.72rem; }
+
+  /* History header stacks */
+  .history-header { flex-direction: column; align-items: flex-start; }
+  .history-actions { width: 100%; justify-content: space-between; }
+  .history-filter { flex: 1; }
+
+  /* History table: smaller text */
+  .history-table { font-size: 0.75rem; }
+  .history-table th,
+  .history-table td { padding: 7px 8px; }
+
+  /* History table wrap scrolls horizontally */
+  .history-table-wrap { max-height: 200px; }
+}
+
+
+/* ════════════════════════════════════════════════════════
+   RESPONSIVE — Very Small (≤ 380px)
+════════════════════════════════════════════════════════ */
+@media (max-width: 380px) {
+
+  .app-header h1 { font-size: 0.85rem; }
+
+  .app-main { padding: 10px 10px; }
+
+  .card { padding: 12px; }
+
+  /* Buttons: full width stack on tiny screens */
+  .btn-cluster { flex-direction: column; }
+  .btn-cluster .btn { width: 100%; }
+
+  /* Visualizer even shorter */
+  .visualizer-area { min-height: 140px; }
+  .visualizer-panel { min-height: 170px; }
+
+  /* Metrics text smaller */
+  .metric-value { font-size: 1.1rem; }
+
+  /* Hide some table columns on tiny screens */
+  .history-table .hide-xs { display: none; }
+}
