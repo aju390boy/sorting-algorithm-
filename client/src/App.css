@@ -303,6 +303,19 @@ select, input { font-family: 'Inter', sans-serif; outline: none; }
 .legend-swatch.bar-swap    { background: #dc2626; }
 .legend-swatch.bar-sorted  { background: #059669; }
 
+/* Rainbow swatch — matches bar value-gradient */
+.legend-rainbow {
+  background: linear-gradient(
+    90deg,
+    hsl(270,85%,62%) 0%,
+    hsl(210,85%,62%) 25%,
+    hsl(150,85%,62%) 50%,
+    hsl( 60,85%,62%) 75%,
+    hsl(  0,85%,62%) 100%
+  );
+  border-radius: 3px;
+}
+
 /* ════════════════════════════════════════════════════════
    Vibrant Progress Bar
 ════════════════════════════════════════════════════════ */
