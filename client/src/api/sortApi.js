@@ -1,6 +1,10 @@
-// api/sortApi.js — All backend API calls in one place
+// api/sortApi.js
+// VITE_API_URL is set in Vercel dashboard for production
+// Falls back to localhost for local development
 
-const API_BASE = 'http://localhost:5000/api/sort';
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api/sort`
+  : 'http://localhost:5000/api/sort';
 
 export const saveSortResult = async (data) => {
   const res = await fetch(`${API_BASE}/run`, {
