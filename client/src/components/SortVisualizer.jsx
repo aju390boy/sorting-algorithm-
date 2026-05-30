@@ -1,24 +1,36 @@
 // components/SortVisualizer.jsx
-// Animated bar chart with color legend and sorted-state support
+// Animated bar chart + vibrant progress bar + color legend
 
 const LEGEND = [
-  { cls: 'bar-default', label: 'Unsorted'   },
-  { cls: 'bar-compare', label: 'Comparing'  },
-  { cls: 'bar-swap',    label: 'Swapping'   },
-  { cls: 'bar-sorted',  label: 'Sorted'     },
+  { cls: 'bar-default', label: 'Unsorted'  },
+  { cls: 'bar-compare', label: 'Comparing' },
+  { cls: 'bar-swap',    label: 'Swapping'  },
+  { cls: 'bar-sorted',  label: 'Sorted'    },
 ];
 
-const SortVisualizer = ({ array, comparing, swapped, isSorted }) => {
+const SortVisualizer = ({
+  array, comparing, swapped, isSorted,
+  progress, isRunning, isPaused, isDone,
+}) => {
   const maxVal = array.length ? Math.max(...array) : 1;
+
+  // Choose progress bar state class
+  const progressState = isDone
+    ? 'progress-done'
+    : isPaused
+    ? 'progress-paused'
+    : isRunning
+    ? 'progress-running'
+    : 'progress-idle';
 
   return (
     <div className="card visualizer-panel">
-      {/* Header row */}
+
+      {/* ── Header row: title + legend ── */}
       <div className="visualizer-header">
         <div className="card-title" style={{ margin: 0 }}>
           Visualizer {array.length > 0 && `— ${array.length} elements`}
         </div>
-        {/* Color Legend */}
         <div className="legend">
           {LEGEND.map(({ cls, label }) => (
             <div key={cls} className="legend-item">
@@ -29,7 +41,36 @@ const SortVisualizer = ({ array, comparing, swapped, isSorted }) => {
         </div>
       </div>
 
-      {/* Bar Chart */}
+      {/* ── Vibrant Progress Bar ── */}
+      <div className="progress-wrap">
+        {/* Track */}
+        <div className="progress-track">
+          <div
+            className={`progress-fill ${progressState}`}
+            style={{ width: `${progress}%` }}
+          />
+          {/* Shimmer overlay — only while running */}
+          {isRunning && <div className="progress-shimmer" />}
+        </div>
+
+        {/* Labels */}
+        <div className="progress-labels">
+          <span className="progress-label-left">
+            {isDone
+              ? '✓ Sort Complete'
+              : isPaused
+              ? '⏸ Paused'
+              : isRunning
+              ? '⚡ Sorting…'
+              : 'Ready'}
+          </span>
+          <span className={`progress-pct ${progressState}`}>
+            {progress}%
+          </span>
+        </div>
+      </div>
+
+      {/* ── Bar Chart ── */}
       {array.length === 0 ? (
         <div className="visualizer-area">
           <div className="visualizer-empty">

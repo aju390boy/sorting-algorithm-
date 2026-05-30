@@ -304,6 +304,132 @@ select, input { font-family: 'Inter', sans-serif; outline: none; }
 .legend-swatch.bar-sorted  { background: #059669; }
 
 /* ════════════════════════════════════════════════════════
+   Vibrant Progress Bar
+════════════════════════════════════════════════════════ */
+.progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 4px 0 14px;
+}
+
+/* Track (background rail) */
+.progress-track {
+  position: relative;
+  width: 100%;
+  height: 10px;
+  background: var(--bg-secondary);
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+/* Filled portion — animates width */
+.progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.15s ease-out;
+  position: relative;
+}
+
+/* ── State: idle (no color yet) ── */
+.progress-fill.progress-idle {
+  width: 0% !important;
+  background: var(--bg-secondary);
+}
+
+/* ── State: running — vibrant rainbow gradient that flows ── */
+.progress-fill.progress-running {
+  background: linear-gradient(
+    90deg,
+    #7c3aed 0%,
+    #4f46e5 18%,
+    #06b6d4 36%,
+    #10b981 54%,
+    #f59e0b 72%,
+    #ef4444 90%,
+    #7c3aed 100%
+  );
+  background-size: 200% 100%;
+  animation: gradient-flow 1.8s linear infinite;
+  box-shadow:
+    0 0 8px rgba(124,58,237,0.7),
+    0 0 16px rgba(79,70,229,0.4),
+    0 0 24px rgba(6,182,212,0.2);
+}
+
+/* ── State: paused — purple/blue static ── */
+.progress-fill.progress-paused {
+  background: linear-gradient(90deg, #7c3aed, #4f46e5, #818cf8);
+  box-shadow: 0 0 8px rgba(124,58,237,0.4);
+  animation: none;
+}
+
+/* ── State: done — all green with celebration glow ── */
+.progress-fill.progress-done {
+  background: linear-gradient(90deg, #059669, #10b981, #34d399, #6ee7b7);
+  background-size: 200% 100%;
+  animation: gradient-flow 2.5s linear infinite;
+  box-shadow:
+    0 0 10px rgba(16,185,129,0.8),
+    0 0 20px rgba(52,211,153,0.4);
+}
+
+/* Flowing gradient animation */
+@keyframes gradient-flow {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* Shimmer sweep — white glare moving right */
+.progress-shimmer {
+  position: absolute;
+  top: 0; left: -60%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.25) 50%,
+    transparent 100%
+  );
+  animation: shimmer-sweep 1.4s ease-in-out infinite;
+  border-radius: 99px;
+}
+
+@keyframes shimmer-sweep {
+  0%   { left: -60%; }
+  100% { left: 120%; }
+}
+
+/* Labels row */
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-label-left {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Percentage counter */
+.progress-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition: color 0.3s;
+}
+
+.progress-pct.progress-idle    { color: var(--text-muted); }
+.progress-pct.progress-running { color: #a78bfa; }
+.progress-pct.progress-paused  { color: #818cf8; }
+.progress-pct.progress-done    { color: #34d399; }
+
+
+/* ════════════════════════════════════════════════════════
    Middle Row: Algorithm Info + Metrics
 ════════════════════════════════════════════════════════ */
 .middle-row {

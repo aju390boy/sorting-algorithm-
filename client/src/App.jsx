@@ -1,4 +1,4 @@
-// App.jsx — Root component with full state + pause/resume/step + array types
+// App.jsx — Root component with full state + pause/resume/step + array types + progress
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Controls       from './components/Controls';
@@ -35,6 +35,19 @@ const generateArray = (type, size) => {
   }
 };
 
+// ── Estimate total animation frames per algorithm ─────────────
+const estimateFrames = (algo, n) => {
+  switch (algo) {
+    case 'bubble':    return Math.floor(n * (n - 1) / 2);
+    case 'selection': return Math.floor(n * (n - 1) / 2);
+    case 'insertion': return Math.floor(n * (n - 1) / 4);
+    case 'merge':     return Math.floor(n * Math.log2(Math.max(n, 2)) * 2);
+    case 'quick':     return Math.floor(n * Math.log2(Math.max(n, 2)) * 2.5);
+    case 'heap':      return Math.floor(n * Math.log2(Math.max(n, 2)) * 3);
+    default:          return n * n;
+  }
+};
+
 // ─────────────────────────────────────────────────────────────
 function App() {
   // ── Controls state ─────────────────────────────────────────
@@ -50,6 +63,7 @@ function App() {
   const [comparing,  setComparing]  = useState([]);
   const [swapped,    setSwapped]    = useState(false);
   const [isSorted,   setIsSorted]   = useState(false);
+  const [progress,   setProgress]   = useState(0);   // ← NEW: 0–100
 
   // ── Metrics state ──────────────────────────────────────────
   const [comparisons, setComparisons] = useState(0);
@@ -57,17 +71,19 @@ function App() {
   const [timeMs,      setTimeMs]      = useState(0);
 
   // ── Playback state ─────────────────────────────────────────
-  const [isRunning, setIsRunning] = useState(false);
-  const [isPaused,  setIsPaused]  = useState(false);
-  const [isDone,    setIsDone]    = useState(false);
+  const [isRunning,  setIsRunning]  = useState(false);
+  const [isPaused,   setIsPaused]   = useState(false);
+  const [isDone,     setIsDone]     = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
   // ── Refs ───────────────────────────────────────────────────
-  const timerRef       = useRef(null);
-  const clockRef       = useRef(null);
-  const generatorRef   = useRef(null);
-  const startTimeRef   = useRef(null);
-  const pausedElapsed  = useRef(0);   // accumulated elapsed when paused
+  const timerRef         = useRef(null);
+  const clockRef         = useRef(null);
+  const generatorRef     = useRef(null);
+  const startTimeRef     = useRef(null);
+  const pausedElapsed    = useRef(0);
+  const frameCountRef    = useRef(0);      // ← NEW: frames elapsed
+  const estimatedRef     = useRef(1);      // ← NEW: estimated total frames
 
   // Cleanup on unmount
   useEffect(() => () => {
@@ -86,11 +102,13 @@ function App() {
   const resetAll = (newArray) => {
     clearInterval(timerRef.current);
     clearInterval(clockRef.current);
-    generatorRef.current = null;
+    generatorRef.current  = null;
+    frameCountRef.current = 0;
     setArray(newArray);
     setComparing([]);
     setSwapped(false);
     setIsSorted(false);
+    setProgress(0);
     setComparisons(0);
     setSwapsCount(0);
     setTimeMs(0);
@@ -101,6 +119,14 @@ function App() {
   };
 
   const applyFrame = (frame) => {
+    // Increment frame counter and update progress
+    frameCountRef.current += 1;
+    const pct = Math.min(
+      99,
+      Math.round((frameCountRef.current / estimatedRef.current) * 100)
+    );
+    setProgress(pct);
+
     setArray(frame.array);
     setComparing(frame.comparing);
     setSwapped(frame.swapped);
@@ -117,6 +143,7 @@ function App() {
     setComparing([]);
     setSwapped(false);
     setIsSorted(true);
+    setProgress(100);           // ← snap to 100% when done
     setIsRunning(false);
     setIsPaused(false);
     setIsDone(true);
@@ -142,10 +169,16 @@ function App() {
 
   const handleStart = useCallback(() => {
     if (isRunning || isPaused) return;
+
+    // Reset counters
     pausedElapsed.current = 0;
+    frameCountRef.current = 0;
+    estimatedRef.current  = estimateFrames(algorithm, array.length);
+
     setComparisons(0);
     setSwapsCount(0);
     setTimeMs(0);
+    setProgress(0);
     setIsSorted(false);
     setIsDone(false);
     setIsRunning(true);
@@ -258,12 +291,16 @@ function App() {
           isDone={isDone}
         />
 
-        {/* Visualizer */}
+        {/* Visualizer with progress */}
         <SortVisualizer
           array={array}
           comparing={comparing}
           swapped={swapped}
           isSorted={isSorted}
+          progress={progress}
+          isRunning={isRunning}
+          isPaused={isPaused}
+          isDone={isDone}
         />
 
         {/* Middle Row: Algorithm Info + Metrics */}
